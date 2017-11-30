@@ -1,0 +1,24 @@
+{
+  "name": "spider",
+  "version": "1.0.0",
+  "description": "my first spider",
+  "main": "spider.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./spider.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeifJG/spider.git"
+  },
+  "author": "leif",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LeifJG/spider/issues"
+  },
+  "homepage": "https://github.com/LeifJG/spider#readme",
+  "devDependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "nodemailer": "^4.4.0"
+  }
+}
