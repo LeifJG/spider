@@ -5,5 +5,5 @@
 ## 依赖
 
   1. http模块，用来发get请求。
-  2. cheerio，用来处理get请求爬去到的html代码，可以跟jquery一样选择目标元素，很方便的一个工具。
+  2. cheerio，用来处理get请求爬取到的html代码，可以跟jquery一样选择目标元素，很方便的一个工具。
   3. nodemailer，用来发邮件。
