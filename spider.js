@@ -2,8 +2,8 @@ const url ='http://www.saskatchewan.ca/residents/moving-to-saskatchewan/immigrat
 const http = url.indexOf('http:')==-1&&url.indexOf('https:')!=-1?require('https'):require('http');
 const cheerio=require('cheerio');
 const nodemailer=require('nodemailer');
-const user=''; //用于发送邮件的邮箱地址和密码
-const pass='';
+const user='ljg@meiyi.ai'; //用于发送邮件的邮箱地址和密码
+const pass='cMP8X7z69EKYYkBe';
 // const opt={
 // 	host:this.host||'220.249.185.178',
 // 	port:this.port||9999,
@@ -29,51 +29,71 @@ const transporter=nodemailer.createTransport({  //邮件服务器的设置。
 	}
 });
 
-const mailOptions = {
-    from: '', // 发送者
-    to: '', // 接受者,可以同时发送多个,以逗号隔开
-    subject: '爬虫测试邮件发送', // 标题
-    text: '测试', // 文本
-    //html:''
-};
-
-function getTarget(html) {//获取需要爬的内容
-	// body...
-	let $=cheerio.load(html);
-	let now=new Date();
-	let target=$('.general-content table').eq(0).find('tr').last().find('td').last().text();
-	if(target>0){
-		sendMail(target);
-		return ;
-	}
-	console.log(`${now} 本次抓取结果为：${target}`);
-}
-
 function start() {//爬整个页面
+	let now=new Date();
+	console.log(`${now} 开始执行`);
 	http.get(url,function (res) {
-		let html = ''
+		let html = '';
 		res.on('data', function (data) {
 			html+=data;
-		})
+		});
 
 		res.on('end',function () {
-			getTarget(html)
-		})
-		// body...
+			getTarget(html);
+		});
 	}).on('error',function (err) {
 		console.log('##error## '+err);
-	})
-}
-
-function sendMail() {//发送邮件
-	transporter.sendMail(mailOptions, function (err, info) {
-	    if (err) {
-	      console.log(err);
-	      return;
-	    }
-	    console.log('发送成功');
+		console.log('重新执行中');
+		eval('start()');
 	});
 }
 
-//start();
-setInterval(start,1800000);//半小时一次。
+function getTarget(html) {//获取需要爬的内容
+	// body...
+	let now=new Date();
+	console.log(`${now} 抓取目标数据中`);
+	let $=cheerio.load(html);
+	let target=[];
+	target.push({ //获取目标数据。
+		name:'Express Entry	:',
+		text:$('.general-content table').eq(0).find('tr').eq(-2).find('td').last().text()
+	});
+	target.push({ //获取目标数据。
+		name:'Occupations In-Demand	:',
+		text:$('.general-content table').eq(0).find('tr').last().find('td').last().text()
+	});
+	now=new Date();
+	console.log(`${now} 抓取成功`);
+
+	if(target[0]>0||target[1]>0){
+		sendMail(target);
+	};
+}
+
+function sendMail(target) {//发送邮件
+	let now=new Date();
+	console.log(`${now} 正在发送邮件`);
+	let result=`<p>目标URL:<a href="${url}">${url}</a></p>`;
+	target.forEach(function(item){
+		result+=`<p>${item.name} ${item.text}</p>`;
+	});
+	const mailOptions = {
+	    from: 'ljg@meiyi.ai,', // 发送者
+	    to: 'ljg@meiyi.ai', // 接受者,可以同时发送多个,以逗号隔开 ,alex@meiyi.ai,joyce@meiyi.ai
+	    subject: `目标内容发生变化。`, // 标题
+	    //text: '抓取内容符合条件,当前抓取内容为：${target} \n asd \r 1231', // 文本
+	    html:result
+	};
+	transporter.sendMail(mailOptions, function (err, info) {
+	    if (err) {
+	      console.log(err);
+	      start();
+	      return;
+	    }
+	    now=new Date();
+	    console.log(`${now} 发送成功`);
+	});
+}
+
+start();
+setInterval(start,3600000);//一小时一次。ra
